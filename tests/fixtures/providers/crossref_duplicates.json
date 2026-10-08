@@ -1,0 +1,11 @@
+{
+  "status": "ok",
+  "message": {
+    "total-results": 3,
+    "items": [
+      {"DOI": "10.1/dup", "title": ["First"], "issued": {"date-parts": [[2020]]}},
+      {"DOI": "10.1/dup", "title": ["First again"], "issued": {"date-parts": [[2020]]}},
+      {"DOI": "10.1/unique", "title": ["Second"], "issued": {"date-parts": [[2021]]}}
+    ]
+  }
+}

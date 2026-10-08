@@ -1,0 +1,19 @@
+<html><body><h1>Sign in</h1>
+<form id="f">
+<label for="e">Email</label><input id="e" name="email" type="email">
+<label for="p">Password</label><input id="p" name="password" type="password">
+<input type="submit" value="Log in"></form><div id="m"></div>
+<script>
+document.getElementById('p').addEventListener('paste', function(ev){
+  ev.preventDefault(); document.getElementById('m').textContent = 'paste rejected';});
+var keystrokes = 0;
+document.getElementById('p').addEventListener('keydown', function(){ keystrokes++; });
+document.getElementById('f').addEventListener('submit', function(ev){
+  ev.preventDefault();
+  var e = document.getElementById('e').value, p = document.getElementById('p').value;
+  if (e === 'a@b.c' && p === 'correct-horse' && keystrokes > 5) {
+    document.body.innerHTML = '<h1>Welcome back</h1><p>Signed in as a@b.c</p>' +
+      '<a href="builder.html">Input Generator</a><p>keystrokes=' + keystrokes + '</p>';
+  } else { document.getElementById('m').textContent = 'Incorrect password'; }
+});
+</script></body></html>

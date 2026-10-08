@@ -1,0 +1,63 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+coverage.xml
+dist/
+build/
+*.egg-info/
+engine_state/
+workspaces/*/
+!workspaces/.gitkeep
+.polymer-cache/
+.env
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+.hypothesis/
+
+# Campaign run artifacts: trajectories and checkpoints are large and regenerable.
+# The manifest, status, decision log and reports are versioned; the raw MD is not.
+
+campaign/rehearsal/
+campaign/phase_b0/melt_test/
+campaign/phase_b0/qm/*/[!b]*.gbw
+campaign/phase_b0/qm/**/*.tmp
+campaign/phase_b0/qm/**/*.bas*
+
+# Campaign run data. Trajectories are large, regenerable, and written live by an active
+# driver -- staging them races the campaign. The scientific record (manifests, status,
+# decision logs, reports, per-replica statistics) IS versioned; the raw MD is not.
+campaign/*/experiments/
+campaign/pids/
+campaign/*_rehearsal/
+campaign/parameterization/work*/
+.paramenv/
+
+# Browser tooling environment and its Chromium (115 MB); rebuilt with one command.
+.browserenv/
+# Live-site artifacts: downloads, archives, diagnostics, screenshots.
+campaign/charmm_gui/downloads/
+campaign/charmm_gui/archives/
+campaign/charmm_gui/diagnostics/
+campaign/charmm_gui/systems/
+campaign/charmm_gui/live_test/
+# Live-site diagnostics: page captures and screenshots from a real session.
+artifacts/charmm_gui/
+
+# CHARMM-GUI polymer repo (added 2026-09): the scientific record -- repo/prepared/run
+# manifests and the per-replica analysis JSON -- is versioned; the raw MD (tens of GB of
+# trajectories), the acquired archives and the extracted CHARMM parameter sets are not.
+campaign/charmm_gui/repo/runs/*
+!campaign/charmm_gui/repo/runs/runs_manifest.json
+!campaign/charmm_gui/repo/runs/PREPARED.md
+!campaign/charmm_gui/repo/runs/studies/
+campaign/charmm_gui/repo/downloads/
+campaign/charmm_gui/repo/systems/
+campaign/charmm_gui/build_failure/
+campaign/charmm_gui/wizard_map/

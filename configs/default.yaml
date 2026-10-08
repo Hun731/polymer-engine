@@ -1,0 +1,145 @@
+# Polymer Autonomous Research Engine -- default configuration.
+#
+# Precedence, highest first:
+#   1. explicit CLI arguments
+#   2. environment variables (POLYMER_*, CHARMM_GUI_*, MP_API_KEY, ...)
+#   3. this file (or $POLYMER_CONFIG, ./polymer.yaml, ~/.config/polymer-engine/config.yaml)
+#   4. the defaults declared in polymer_engine.core.config
+#
+# NO CREDENTIALS BELONG IN THIS FILE. Supply them via environment variables, or point
+# `credentials.charmm_gui_token_file` at a chmod-600 file outside the repository.
+
+paths:
+  root: .
+  data_dir: data
+  workspace_dir: workspaces
+  scratch_dir: scratch
+  state_dir: engine_state
+  cache_dir: .polymer-cache
+  database: engine_state/engine.sqlite
+
+local_tools:
+  # A bare string is shorthand for {executable: ...}. Set `path:` to pin an exact
+  # binary; a configured path overrides PATH lookup entirely, which is what you want
+  # when several GROMACS builds are installed.
+  gromacs:
+    executable: gmx
+    min_version: "2021"
+    # path: /opt/gromacs-2026.3/bin/gmx
+  orca:
+    executable: orca
+  plumed:
+    executable: plumed
+    min_version: "2.7"
+  python:
+    executable: python3
+    min_version: "3.11"
+
+resources:
+  max_concurrent_jobs: 1
+  # null means "detect"; set true/false to force the answer for reproducibility.
+  gpu_available: null
+  gpu_device_ids: []
+  # job_timeout_s: 86400
+
+http:
+  timeout_s: 30.0
+  connect_timeout_s: 10.0
+  max_retries: 3
+  backoff_base_s: 0.5
+  backoff_max_s: 30.0
+  rate_limit_per_s: 3.0
+  cache_enabled: true
+  cache_ttl_s: 86400.0
+  user_agent: polymer-autonomous-engine
+  offline: false
+
+credentials:
+  # Values are read from the environment. Only non-secret identifiers belong here.
+  # crossref_mailto: lab@example.org
+  # openalex_mailto: lab@example.org
+  # charmm_gui_token_file: ~/.config/polymer-engine/charmm-gui.token
+
+# ---------------------------------------------------------------------------
+# Scientific assumptions. These are recorded verbatim in every campaign manifest,
+# so changing one changes the campaign fingerprint. Nothing below is hard-coded
+# anywhere in the simulation layer.
+# ---------------------------------------------------------------------------
+simulation:
+  # 'UNSPECIFIED' is honest. Set this to the force field you actually used.
+  force_field: UNSPECIFIED
+  water_model: UNSPECIFIED
+  temperature_k: 300.0
+  pressure_bar: 1.0
+  timestep_ps: 0.002
+  replicas: 3
+  base_seed: 20240101
+  minimization_steps: 50000
+  nvt_ns: 1.0
+  npt_ns: 5.0
+  production_ns: 50.0
+  cutoff_nm: 1.2
+  pme_fourier_spacing_nm: 0.12
+  constraints: h-bonds
+  thermostat: v-rescale
+  production_thermostat: nose-hoover
+  # C-rescale, not Berendsen: Berendsen does not sample the NPT ensemble and was
+  # removed in GROMACS 2025+.
+  barostat: c-rescale
+  production_barostat: parrinello-rahman
+  tau_t_ps: 1.0
+  tau_p_ps: 5.0
+  compressibility_bar_inv: 4.5e-5
+  trajectory_output_ps: 10.0
+  energy_output_ps: 1.0
+  log_output_ps: 10.0
+
+umbrella:
+  # 0.08 nm at k = 1000 kJ/mol/nm^2 is ~1.6 sigma at 300 K, inside the ~2 sigma limit
+  # beyond which adjacent windows stop overlapping and the PMF is undetermined.
+  spacing_nm: 0.08
+  force_constant_kj_mol_nm2: 1000.0
+  window_ns: 10.0
+  equilibration_fraction: 0.2
+  min_pair_overlap: 0.10
+  min_windows: 5
+  bootstrap_samples: 200
+  max_adaptive_rounds: 3
+
+analysis:
+  # 'reverse-cumulative' chooses the production window by maximising effective sample
+  # count rather than discarding an arbitrary fixed fraction.
+  equilibration_detection: reverse-cumulative
+  discard_fraction: 0.2
+  stride: 1
+  bootstrap_samples: 1000
+  confidence_level: 0.95
+  # Effective samples, after correcting for autocorrelation -- not raw frame count.
+  min_effective_samples: 20.0
+  max_drift_fraction: 0.02
+  max_relative_stderr: 0.02
+  replica_agreement_alpha: 0.05
+  random_seed: 20240101
+
+safety:
+  # Local scientific executables never run unless this is true.
+  execution_enabled: false
+  allow_network: true
+  require_provenance_for_promotion: true
+  require_uncertainty_for_promotion: true
+  require_replica_agreement: true
+  require_equilibration_before_production: true
+  max_archive_bytes: 2147483648
+  max_archive_members: 200000
+
+planning:
+  information_weight: 1.5
+  value_weight: 1.0
+  cost_weight: 0.5
+  risk_weight: 1.0
+  tie_break: cheapest
+
+logging:
+  level: INFO
+  format: text
+  # file: engine_state/engine.log

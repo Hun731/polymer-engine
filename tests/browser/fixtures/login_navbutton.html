@@ -1,0 +1,26 @@
+<html><body>
+<!-- Reproduces the real CHARMM-GUI sign-in page: a navigation control whose accessible
+     name is "Login" sits OUTSIDE the form, while the form's real submit is an
+     <input type=submit> whose accessible name is "Submit". A selector that matches a
+     button by the word "login" clicks the wrong one. -->
+<button style="float:right" onclick="window.location.href='./login_navbutton.html'">Login</button>
+<form action="./login_navbutton.html" method="post" class="loginbox" autocomplete="off">
+<input type="hidden" name="do" value="login" id="do">
+<input placeholder="Email" type="text" name="email" id="email">
+<input placeholder="Password" type="password" name="password" id="password">
+<input type="submit" value="Submit">
+</form>
+<div id="m"></div>
+<script>
+document.getElementById('password').addEventListener('paste', function(ev){
+  ev.preventDefault(); document.getElementById('m').textContent='paste rejected';});
+var keystrokes = 0;
+document.getElementById('password').addEventListener('keydown', function(){ keystrokes++; });
+document.querySelector('form').addEventListener('submit', function(ev){
+  ev.preventDefault();
+  var e = document.getElementById('email').value, p = document.getElementById('password').value;
+  if (e === 'a@b.c' && p === 'correct-horse' && keystrokes > 5) {
+    document.body.innerHTML = '<h1>Welcome back</h1><p>Signed in as a@b.c</p>';
+  } else { document.getElementById('m').textContent = 'Incorrect password'; }
+});
+</script></body></html>

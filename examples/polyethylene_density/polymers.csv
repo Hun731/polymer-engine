@@ -1,0 +1,16 @@
+name,repeat_unit_smiles,Tg (degC),density (g/cm3),Young's Modulus (GPa),crystallinity (%)
+polyethylene,*CC*,-120,0.94,1.0,60
+polypropylene,*CC(C)*,-10,0.90,1.5,55
+polystyrene,*CC(*)c1ccccc1,100,1.05,3.2,0
+poly(vinyl chloride),*CC(Cl)*,80,1.38,3.0,0
+poly(methyl methacrylate),*CC(C)(*)C(=O)OC,105,1.18,3.1,0
+poly(ethylene oxide),*CCO*,-60,1.13,,70
+poly(vinyl alcohol),*CC(O)*,85,1.19,2.5,40
+polyacrylonitrile,*CC(*)C#N,95,1.18,3.5,30
+nylon-6,*NCCCCCC(=O)*,47,1.14,2.7,35
+poly(lactic acid),*OC(C)C(=O)*,60,1.25,3.5,40
+poly(ethylene terephthalate),*OCCOC(=O)c1ccc(cc1)C(=O)*,76,1.38,2.8,35
+polytetrafluoroethylene,*C(F)(F)C(F)(F)*,-97,2.20,0.5,70
+poly(butyl acrylate),*CC(*)C(=O)OCCCC,-54,1.08,0.01,0
+polycaprolactone,*OCCCCCC(=O)*,-60,1.14,0.4,50
+poly(vinyl acetate),*CC(*)OC(C)=O,30,1.19,1.8,0

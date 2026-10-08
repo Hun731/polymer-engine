@@ -1,0 +1,14 @@
+{
+  "version": "6.9",
+  "hitCount": 2,
+  "resultList": {
+    "result": [
+      {"id": "38000001", "source": "MED", "pmid": "38000001", "pmcid": "PMC9000001",
+       "doi": "10.1000/epmc1", "title": "Hydrogen bonding in polyamides", "journalTitle": "Polymer",
+       "pubYear": "2023", "authorString": "Smith J, Lee K.", "citedByCount": 12, "isOpenAccess": "Y",
+       "fullTextUrlList": {"fullTextUrl": [{"url": "https://europepmc.org/article/MED/38000001"}]}},
+      {"id": "38000002", "source": "MED", "doi": "10.1000/epmc2", "title": "Free volume in glassy polymers",
+       "journalTitle": "Macromolecules", "pubYear": "2022", "citedByCount": 3, "isOpenAccess": "N"}
+    ]
+  }
+}

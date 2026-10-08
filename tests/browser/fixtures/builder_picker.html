@@ -1,0 +1,28 @@
+<html><body><h1>Input Generator</h1>
+<h2>System Type:</h2>
+<label><input type="radio" name="model" value="single"> Single Chain</label>
+<label><input type="radio" name="model" value="melt"> Melt</label>
+<h2>Building Block(s) of Polymer:</h2>
+<!-- The monomer is chosen through a span with an onclick, not a form control -- the
+     shape the live page turned out to have. -->
+<table id="poly_table"><tr>
+  <td>Polymer chain 1:</td>
+  <td><select name="capf[1]"><option value="H">H-</option><option value="C">H₃C-</option></select></td>
+  <td>[</td>
+  <td><span id="unitpick" style="cursor:pointer" onclick="openPicker()">select unit</span></td>
+  <td>]</td>
+  <td><select name="capl[1]"><option value="H">-H</option><option value="C">-CH₃</option></select></td>
+</tr></table>
+<button type="button" id="butt[1]" onclick="void 0">Add monomer unit</button>
+<table id="nextBtn"><tr><td><button type="button">Next Step:
+Build Polymer Chains</button></td></tr></table>
+<div id="picker" style="display:none">
+  <select name="unit[1]"><option value="">--</option>
+    <option value="ETHY">Ethylene</option><option value="PROP">Propylene</option>
+    <option value="STYR">Styrene</option><option value="LACT">Lactide</option></select>
+  <input type="text" name="subtext[1]" value="10" required>
+  <label for="nrep">Repeats</label><input id="nrep" name="nrep" type="number" required>
+</div>
+<script>
+function openPicker(){ document.getElementById('picker').style.display='block'; }
+</script></body></html>

@@ -1,0 +1,36 @@
+<html><body><h1>Input Generator</h1>
+<h2>System Type:</h2>
+<label><input type="radio" name="model" value="single" checked> Single Chain</label>
+<label><input type="radio" name="model" value="melt"> Melt</label>
+<h2>Building Block(s) of Polymer:</h2>
+<table id="poly_table"><tr><td>Polymer chain 1:</td><td>[</td>
+  <td><span id="unit1">select unit</span>
+  <input type="text" name="subtext[1]" value="10"></td><td>]</td></tr></table>
+<div class="menu"><div class="mono"><div class="mono-name">Polylactic acid</div>
+  <ul style="display:none"><li onclick="set_monomer(this)">atactic</li></ul></div></div>
+<div id="skel" style="display:none"><input type="text" name="subtext[1]" value="10"></div>
+<input type="hidden" name="jobid" value="">
+<button type="button" id="step1" onclick="toStep2()">Next Step:
+Build Polymer Chains</button>
+<script>
+function set_monomer(el){
+  var dp=document.querySelector("#poly_table input[name^='subtext[1]']");
+  if(dp) dp.setAttribute('name','subtext[1][1]');
+  document.getElementById('unit1').textContent='PLA(ata)';}
+function toStep2(){
+  if(document.getElementById('unit1').textContent==='select unit')return;
+  document.querySelector("input[name=jobid]").value='9998887';
+  var single=document.querySelector("input[name=model][value=single]").checked;
+  if(single){
+    document.body.innerHTML='<h1>Step 2</h1><p>Single chain built. '+
+      '<a href="download.tgz">download.tgz</a> (view structure)</p>'+
+      '<input type="hidden" name="jobid" value="9998887">';
+  } else {
+    document.body.innerHTML='<h1>Step 2</h1><p>System Size Determination</p>'+
+      '<input type="hidden" name="jobid" value="9998887">'+
+      '<button type="button" onclick="toStep3()">Next Step:\nSolvate</button>';
+  }}
+function toStep3(){
+  document.body.innerHTML='<h1>Step 3</h1><p>Equilibration Option</p>'+
+    '<button type="button">Next Step:\nGenerate Equilibrium</button>';}
+</script></body></html>

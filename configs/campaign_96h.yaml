@@ -1,0 +1,143 @@
+# 96-hour autonomous polyolefin density campaign
+#
+# Every scientific assumption here is explicit and recorded in the campaign manifest.
+# Nothing in this file is a silent default: where a value is a convention rather than a
+# derivation, the comment says so.
+
+campaign:
+  id: polyolefin_density_96h
+  duration_hours: 96
+  autonomous: true
+  question: >-
+    How do side-chain length, side-chain branching and backbone substitution control
+    the amorphous melt density of saturated polyolefins at 300 K and 1 bar?
+
+objective:
+  primary_property: density
+  direction: learn          # learn the structure-property relation; do not optimise yet
+  # Secondary observables. These are MD proxies, reported with their own uncertainty.
+  # None of them is an experimental equivalent and none is presented as one.
+  secondary_properties:
+    - radius_of_gyration
+    - end_to_end_distance
+    - free_volume_fraction
+    - potential_energy
+    - volume
+
+dataset:
+  source: examples/benchmark_campaign/candidates.csv
+  source_sha256: 7993771052654e166c7a34793360e8883d2d6962e266d2de0b51af2ccd637765
+  # Only the polyolefin family passed force-field qualification; see
+  # campaign/phase_b0/force_field_qualification.csv for the evidence per polymer.
+  qualified_families: [polyolefin]
+  candidate_count: 13       # 3 from the dataset + 10 generated, all saturated hydrocarbons
+
+force_field:
+  policy: qualified_family_specific
+  name: OPLS-AA
+  version: "OPLS-AA/L all-atom force field (2001 aminoacid dihedrals)"
+  source: /mnt/data/biodesign/opt/gromacs-2026.3/share/gromacs/top/oplsaa.ff
+  typing: polymer_engine.simulation.opls_typing   # tabulated types only, never derived
+  # A force-field change is a scientific decision and requires editing this file.
+  # The engine may report incompatibility; it may not switch force fields.
+  allow_autonomous_substitution: false
+  qualification:
+    method: MM-vs-QM torsion profile comparison
+    qm_reference: n-butane C-C-C-C relaxed scan, 13 points
+    qm_method: B3LYP-D3BJ
+    qm_basis: def2-SVP
+    torsion_rmse_kj_mol: 1.130
+    barrier_error_kj_mol: -2.128
+    relative_barrier_error: 0.099
+    criteria: general_organic_forcefield
+    verdict: PASS
+
+force_field_validation:
+  # From AcceptanceCriteria.general_organic_forcefield(). These are conventions drawn
+  # from the GAFF/OPLS parameterisation literature, NOT derivations. Recorded here so a
+  # manifest names the convention it adopted rather than inheriting an invisible default.
+  torsion_rmse_max: 2.0           # kJ/mol
+  max_energy_error: 4.0           # kJ/mol, barrier
+  max_barrier_relative_error: 0.25
+  geometry_rmsd_max: 0.2          # angstrom
+  basis_for_thresholds: convention
+
+simulation:
+  temperature_k: 300.0    # above Tg for every candidate (highest is PP at 263 K), so
+                          # each system is a genuine amorphous melt rather than a glass
+  pressure_bar: 1.0
+  replicas: 3             # the minimum from which a spread can be estimated at all
+  degree_of_polymerization: 30
+  chains_per_system: 20
+  minimization_steps: 50000
+  nvt_ns: 0.2
+  # Protocol v3. insert-molecules can only pack rigid pre-built chains at ~300 kg/m^3
+  # against an equilibrium melt density near 890, so the box must shrink threefold. At
+  # 2 ns of NPT that compression bled into production and two replicas of three never
+  # equilibrated (g of 1006 and 2374 -- drift, not correlation). Time moves from
+  # production into equilibration; no acceptance criterion changes.
+  # See campaign/PROTOCOL_V3_FINDING.md.
+  npt_ns: 80.0
+  # 30 ns is ample once the system is actually equilibrated: at the equilibrated g of
+  # about 7 it yields ~2000 effective samples against a floor of 20. The earlier long
+  # production runs were not buying sampling, they were paying for compression.
+  production_ns: 30.0
+  equilibration_discard_fraction: 0.5   # analysis uses the second half only
+  trajectory_output_ps: 20.0
+  energy_output_ps: 2.0
+  packing_box_scale: 1.30
+
+validation:
+  require_equilibration: true
+  require_effective_sample_size: true
+  require_replica_agreement: true
+  min_effective_samples: 20
+  max_relative_stderr: 0.02
+  max_drift_fraction: 0.02
+  replica_chi_square_max: 4.0
+
+umbrella:
+  # READY_FOR_UMBRELLA = TRUE (Phase A verified real gmx mdrun -plumed).
+  # Available does not mean required: the planner must justify each request.
+  enabled: true
+  requires_justification: true
+  min_pair_overlap: 0.10
+
+mechanics:
+  # Mechanical *analysis* exists; the deformation protocol that produces stress-strain
+  # data does not. Enabling this would mean reporting a modulus from a workflow that
+  # cannot generate its own input.
+  enabled: false
+  reason: no validated deformation protocol; analysis-only capability
+
+active_learning:
+  enabled: true
+  # Stage A calibrates on known chemistry before Stage B proposes anything new.
+  calibration_batch: 3
+  min_validated_points_before_exploration: 6
+  acquisition: uncertainty_and_diversity
+
+resources:
+  max_cpu: 20             # of 24 logical cores, leaving headroom for analysis
+  max_gpu: 1
+  max_ram_gb: 40
+  disk_reserve_gb: 100
+  cpus_per_job: 10
+  max_concurrent_jobs: 2
+
+retries:
+  max_attempts: 2
+
+autonomy:
+  allow_new_candidates: true
+  allow_new_simulations: true
+  allow_strategy_updates: true
+  allow_validation_rule_changes: false
+
+schedule:
+  # Planning targets, not rigid allocations; the scheduler adapts to measured runtimes.
+  calibration_fraction: 0.30
+  analysis_fraction: 0.12
+  exploration_fraction: 0.45
+  reserve_fraction: 0.13
+  checkpoint_every_seconds: 120

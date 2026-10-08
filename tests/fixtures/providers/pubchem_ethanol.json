@@ -1,0 +1,23 @@
+{
+  "PropertyTable": {
+    "Properties": [
+      {
+        "CID": 702,
+        "Title": "Ethanol",
+        "MolecularFormula": "C2H6O",
+        "MolecularWeight": "46.07",
+        "InChI": "InChI=1S/C2H6O/c1-2-3/h3H,2H2,1H3",
+        "InChIKey": "LFQSCWFLJHTTHZ-UHFFFAOYSA-N",
+        "SMILES": "CCO",
+        "ConnectivitySMILES": "CCO",
+        "XLogP": -0.1,
+        "TPSA": 20.2,
+        "HBondDonorCount": 1,
+        "HBondAcceptorCount": 1,
+        "RotatableBondCount": 0,
+        "HeavyAtomCount": 3,
+        "Charge": 0
+      }
+    ]
+  }
+}

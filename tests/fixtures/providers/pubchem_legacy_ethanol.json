@@ -1,0 +1,8 @@
+{
+  "PropertyTable": {
+    "Properties": [
+      {"CID": 702, "Title": "Ethanol", "MolecularFormula": "C2H6O", "MolecularWeight": "46.07",
+       "CanonicalSMILES": "CCO", "IsomericSMILES": "CCO", "HeavyAtomCount": 3}
+    ]
+  }
+}

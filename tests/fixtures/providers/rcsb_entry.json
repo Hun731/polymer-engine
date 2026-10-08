@@ -1,0 +1,3 @@
+{"rcsb_id": "1ABC", "struct": {"title": "Reference structure"},
+ "exptl": [{"method": "X-RAY DIFFRACTION"}],
+ "rcsb_entry_info": {"resolution_combined": [1.8], "polymer_entity_count": 1, "deposited_atom_count": 1234}}

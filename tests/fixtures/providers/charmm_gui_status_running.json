@@ -1,0 +1,2 @@
+{"status": "running", "pidfile": "/jobs/1234/pid", "lastOutFile": "step3_pbcsetup.out",
+ "lastOutTime": "2026-01-02T03:00:00Z", "lastOutLines": ["building bilayer"]}

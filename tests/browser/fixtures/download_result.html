@@ -1,0 +1,13 @@
+<html><body><h1>Input Generator</h1>
+<p>Single chain built for job 9998887.</p>
+<span class="download" onclick="download_project(this)">download.tgz</span>
+<script>
+var hex = "1f8b0800000000000003edd0b10ac2301485e1cc7d8abc8092c424ce821d5d7c838001a5b4437205fbf6b638e820e85244f8bfe5c0b9cbe1969c4e7d5ecb4dd462cc24463fa7dd06f39a0f6ea36c703e06ebdddc5b1fa74a9be5263d5daba4a2b5eacaa59e87b4ead2f0f6159fee7fead8eef687b6915c45d7b14aee9b5f4f02000000000000000000000000007ce10eddba158300280000";
+function download_project(el){
+  var bytes = new Uint8Array(hex.match(/.{2}/g).map(h=>parseInt(h,16)));
+  var blob = new Blob([bytes], {type:'application/gzip'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = 'download.tgz';
+  document.body.appendChild(a); a.click();
+}
+</script></body></html>

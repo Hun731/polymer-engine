@@ -1,0 +1,198 @@
+# Open-ended polyolefin density campaign: annealed equilibration, 100 ns production
+#
+# Every scientific assumption here is explicit and recorded in the campaign manifest.
+# Nothing in this file is a silent default: where a value is a convention rather than a
+# derivation, the comment says so.
+
+campaign:
+  id: polyolefin_density_anneal
+  autonomous: true
+  # Open-ended. The campaign stops when science, resources or a person says so -- not
+  # when a clock runs out. Set a number here only for a deliberately time-boxed run
+  # (a rehearsal, or a shared machine with a booking).
+  duration_hours: null
+  stop_policy: scientific
+  # Optional scientific stop conditions; null disables each.
+  target_validated: null
+  question: >-
+    How do side-chain length, side-chain branching and backbone substitution control
+    the amorphous melt density of saturated polyolefins at 300 K and 1 bar?
+
+objective:
+  primary_property: density
+  direction: learn          # learn the structure-property relation; do not optimise yet
+  # Secondary observables. These are MD proxies, reported with their own uncertainty.
+  # None of them is an experimental equivalent and none is presented as one.
+  secondary_properties:
+    - radius_of_gyration
+    - end_to_end_distance
+    - free_volume_fraction
+    - potential_energy
+    - volume
+
+dataset:
+  source: examples/benchmark_campaign/candidates.csv
+  source_sha256: 7993771052654e166c7a34793360e8883d2d6962e266d2de0b51af2ccd637765
+  # Only the polyolefin family passed force-field qualification; see
+  # campaign/phase_b0/force_field_qualification.csv for the evidence per polymer.
+  qualified_families: [polyolefin]
+  candidate_count: 13       # 3 from the dataset + 10 generated, all saturated hydrocarbons
+
+force_field:
+  policy: qualified_family_specific
+  name: OPLS-AA
+  version: "OPLS-AA/L all-atom force field (2001 aminoacid dihedrals)"
+  source: /mnt/data/biodesign/opt/gromacs-2026.3/share/gromacs/top/oplsaa.ff
+  typing: polymer_engine.simulation.opls_typing   # tabulated types only, never derived
+  # A force-field change is a scientific decision and requires editing this file.
+  # The engine may report incompatibility; it may not switch force fields.
+  allow_autonomous_substitution: false
+  qualification:
+    method: MM-vs-QM torsion profile comparison
+    qm_reference: n-butane C-C-C-C relaxed scan, 13 points
+    qm_method: B3LYP-D3BJ
+    qm_basis: def2-SVP
+    torsion_rmse_kj_mol: 1.130
+    barrier_error_kj_mol: -2.128
+    relative_barrier_error: 0.099
+    criteria: general_organic_forcefield
+    verdict: PASS
+
+force_field_validation:
+  # From AcceptanceCriteria.general_organic_forcefield(). These are conventions drawn
+  # from the GAFF/OPLS parameterisation literature, NOT derivations. Recorded here so a
+  # manifest names the convention it adopted rather than inheriting an invisible default.
+  torsion_rmse_max: 2.0           # kJ/mol
+  max_energy_error: 4.0           # kJ/mol, barrier
+  max_barrier_relative_error: 0.25
+  geometry_rmsd_max: 0.2          # angstrom
+  basis_for_thresholds: convention
+
+simulation:
+  temperature_k: 300.0    # above Tg for every candidate (highest is PP at 263 K), so
+                          # each system is a genuine amorphous melt rather than a glass
+  pressure_bar: 1.0
+  replicas: 3             # the minimum from which a spread can be estimated at all
+  degree_of_polymerization: 30
+  chains_per_system: 20
+  minimization_steps: 50000
+  nvt_ns: 0.2
+  # Protocol v3. insert-molecules can only pack rigid pre-built chains at ~300 kg/m^3
+  # against an equilibrium melt density near 890, so the box must shrink threefold. At
+  # 2 ns of NPT that compression bled into production and two replicas of three never
+  # equilibrated (g of 1006 and 2374 -- drift, not correlation). Time moves from
+  # production into equilibration; no acceptance criterion changes.
+  # See campaign/PROTOCOL_V3_FINDING.md.
+  # Simulated annealing before the NPT compression. Added on the evidence of run3, where
+  # the density traces separated the failures into two different problems that a drift
+  # check reports identically:
+  #
+  #   polypropylene    all 3 replicas flat        equilibrated
+  #   polyisobutylene  density +1.7 to +8.6%,     relaxation that never finished
+  #                    potential energy flat
+  #   polyethylene     density +4.5 to +9.1%,     ORDERING -- leaving the amorphous
+  #                    energy -0.48 to -0.99 sd   state, which more time cannot fix
+  #
+  # `insert-molecules` can only pack rigid chains at about a third of melt density, so
+  # NPT compresses the box threefold and some replicas jam. Heating to 500 K -- above the
+  # 372 K melting point of the C60 chains here -- lets the chains move past one another
+  # first. 3 ns heating, 7 ns hold, 10 ns cooling; the cooling ramp is the long one
+  # because that is when ordering happens.
+  #
+  # This addresses polyisobutylene. It will NOT fix polyethylene: at 300 K a C60 alkane
+  # sits 70 K below its melting point, so an amorphous melt is not its equilibrium state
+  # and no protocol change makes it one. That candidate should now come back diagnosed
+  # as ORDERING rather than as short of data.
+  anneal_ns: 20.0
+  anneal_temperature_k: 500.0
+  npt_ns: 80.0
+  # 30 ns is ample once the system is actually equilibrated: at the equilibrated g of
+  # about 7 it yields ~2000 effective samples against a floor of 20. The earlier long
+  # production runs were not buying sampling, they were paying for compression.
+  # Raised from 30 ns on the evidence of the completed 22 h run, where all three
+  # candidates failed and every failure was a sampling or equilibration problem rather
+  # than a physics one:
+  #
+  #   polyethylene    replica 2   n_eff 15.2   below the floor of 20
+  #   polyisobutylene replica 3   n_eff 4.9    "observable is still drifting: 2.915%"
+  #   polypropylene   all three   reduced chi-square 321 against a threshold of 4
+  #
+  # Effective sample counts ranged from 4.9 to 13068 across replicas that differed only
+  # by seed -- a 2700-fold spread, which is what an ensemble that has not settled looks
+  # like. Because analysis discards the first half, 100 ns gives the system another 50 ns
+  # of settling *inside* production before any frame is used, and yields the last 50 ns
+  # for statistics instead of the last 15.
+  #
+  # This does not change any acceptance criterion. It buys samples and settling time; if
+  # the drift is structural rather than slow, longer production will not hide it -- the
+  # gates will fail again, which is the point of them.
+  production_ns: 100.0
+  equilibration_discard_fraction: 0.5   # analysis uses the second half only
+  trajectory_output_ps: 20.0
+  energy_output_ps: 2.0
+  packing_box_scale: 1.30
+
+validation:
+  require_equilibration: true
+  require_effective_sample_size: true
+  require_replica_agreement: true
+  min_effective_samples: 20
+  max_relative_stderr: 0.02
+  max_drift_fraction: 0.02
+  replica_chi_square_max: 4.0
+
+umbrella:
+  # READY_FOR_UMBRELLA = TRUE (Phase A verified real gmx mdrun -plumed).
+  # Available does not mean required: the planner must justify each request.
+  enabled: true
+  requires_justification: true
+  min_pair_overlap: 0.10
+
+mechanics:
+  # Mechanical *analysis* exists; the deformation protocol that produces stress-strain
+  # data does not. Enabling this would mean reporting a modulus from a workflow that
+  # cannot generate its own input.
+  enabled: false
+  reason: no validated deformation protocol; analysis-only capability
+
+active_learning:
+  enabled: true
+  # Stage A calibrates on known chemistry before Stage B proposes anything new.
+  calibration_batch: 3
+  min_validated_points_before_exploration: 6
+  acquisition: uncertainty_and_diversity
+
+resources:
+  # Per-stage wall-clock cap. Production runs about 4.1 h per replica at 100 ns; the
+  # previous 6 h cap killed one replica of three at exactly the limit, and a killed
+  # stage discards the replica rather than degrading it.
+  stage_timeout_s: 43200.0
+  max_cpu: 20             # of 24 logical cores, leaving headroom for analysis
+  max_gpu: 1
+  max_ram_gb: 40
+  disk_reserve_gb: 100
+  cpus_per_job: 10
+  max_concurrent_jobs: 2
+
+retries:
+  # Raised from 2: polyethylene consumed both attempts on infrastructure, not science
+  # -- one replica killed by the 6-hour stage cap at exactly 360 minutes, the other run
+  # slowed past its deadline by an unrelated GROMACS job sharing the GPU. Both causes
+  # are fixed (the cap is 12 h and configurable; the stop script no longer matches
+  # foreign processes), so a third attempt is a retry of the fixed system rather than
+  # a louder repeat of the broken one.
+  max_attempts: 3
+
+autonomy:
+  allow_new_candidates: true
+  allow_new_simulations: true
+  allow_strategy_updates: true
+  allow_validation_rule_changes: false
+
+schedule:
+  # Planning targets, not rigid allocations; the scheduler adapts to measured runtimes.
+  calibration_fraction: 0.30
+  analysis_fraction: 0.12
+  exploration_fraction: 0.45
+  reserve_fraction: 0.13
+  checkpoint_every_seconds: 120

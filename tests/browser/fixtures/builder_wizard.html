@@ -1,0 +1,55 @@
+<html><body><h1>Input Generator</h1>
+<h2>System Type:</h2>
+<label><input type="radio" name="model" value="single" checked> Single Chain</label>
+<label><input type="radio" name="model" value="melt"> Melt</label>
+<h2>Building Block(s) of Polymer:</h2>
+<table id="poly_table"><tr>
+  <td>Polymer chain 1:</td>
+  <td><select name="capf[1]"><option value="H">H-</option></select></td>
+  <td>[</td><td><span id="unit1">select unit</span>
+  <input type="text" name="subtext[1]" value="10" style="width:3em"></td>
+  <td>]</td>
+  <td><select name="capl[1]"><option value="H">-H</option></select></td>
+</tr></table>
+<div class="menu">
+  <div class="mono"><div class="mono-name">Polylactic acid</div>
+  <ul class="submenu" style="display:none">
+    <li onclick="set_monomer(this)">isotactic (R)</li>
+    <li onclick="set_monomer(this)">atactic</li></ul></div>
+  <div class="mono"><div class="mono-name">Esters</div>
+  <ul class="submenu" style="display:none">
+    <li onclick="set_monomer(this)">Polyethylene terephthalate</li></ul></div>
+</div>
+<input type="hidden" name="jobid" value="">
+<table id="nextBtn"><tr><td><button type="button" onclick="submitStep()">Next Step:
+Build Polymer Chains</button></td></tr></table>
+<!-- The hidden skeleton clones the whole named menu, as the live page does: the
+     user's probe showed each group once with its options doubled, so clone and
+     original must resolve to the same group label. -->
+<div id="skel" style="display:none">
+  <div class="mono"><div class="mono-name">Polylactic acid</div>
+  <ul><li onclick="set_monomer(this)">isotactic (R)</li>
+      <li onclick="set_monomer(this)">atactic</li></ul></div>
+  <div class="mono"><div class="mono-name">Esters</div>
+  <ul><li onclick="set_monomer(this)">Polyethylene terephthalate</li></ul></div>
+  <!-- skel-subtext: the clone shares the live input's name, which is what made a
+       bare name selector resolve to an element nobody can click. -->
+  <table><tr><td><input type="text" name="subtext[1]" value="10"></td></tr></table>
+</div>
+<script>
+function set_monomer(el){
+  // The live page renames the repeat-count input once a unit is chosen:
+  // subtext[1] -> subtext[1][1]. Mirrored here because the locators depend on it.
+  var dp = document.querySelector("#poly_table input[name^='subtext[1]']");
+  if (dp) dp.setAttribute('name', 'subtext[1][1]');
+  var name = el.parentElement.previousElementSibling.textContent.trim();
+  var unit = (name === 'Esters') ? el.textContent.trim() : name + ' [' + el.textContent.trim() + ']';
+  document.getElementById('unit1').textContent = unit;
+}
+function submitStep(){
+  if (document.getElementById('unit1').textContent === 'select unit') return;
+  document.querySelector("input[name=jobid]").value = '5557799';
+  document.body.innerHTML = '<h1>Step 2</h1><p>jobid=5557799</p>' +
+    '<input type="hidden" name="jobid" value="5557799">';
+}
+</script></body></html>

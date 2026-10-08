@@ -1,0 +1,10 @@
+[ moleculetype ]
+SOL     2
+
+[ atoms ]
+    1   OW    1  SOL   OW   1  -0.8476  15.99940
+    2   HW    1  SOL  HW1   1   0.4238   1.00800
+    3   HW    1  SOL  HW2   1   0.4238   1.00800
+
+[ settles ]
+    1   1   0.09572  0.15139

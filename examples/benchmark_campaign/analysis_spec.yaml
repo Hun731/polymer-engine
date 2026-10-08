@@ -1,0 +1,72 @@
+# What this benchmark measures, and what would have to be true for the answer to count.
+#
+# Nothing here states an expected scientific result. The checks are structural: they
+# assert that the machinery produced the right *kind* of output with the right metadata,
+# not that a particular number came out.
+
+objective:
+  title: "Relate repeat-unit descriptors to bulk density"
+  description: >
+    Demonstrate the full loop on a tiny system: curate candidates, build and validate a
+    system, run MD, apply convergence gates, extract a property, fit a surrogate, and
+    rank the next experiments.
+
+properties:
+  - name: density
+    units: kg/m^3
+    required_replicas: 3
+    min_effective_samples: 20
+    # The benchmark runs 20 ps on 2 replicas, so this WILL fail. That is the expected
+    # demonstration: the pipeline runs to completion and the gates still refuse it.
+    expected_gate_outcome: fail_or_inconclusive
+    reason: >
+      20 ps across 2 replicas cannot supply 20 independent samples of a quantity whose
+      correlation time is tens of picoseconds, and 2 replicas cannot demonstrate
+      reproducibility.
+
+  - name: temperature
+    units: K
+    required_replicas: 1
+    expected_gate_outcome: any
+    reason: A control check that the thermostat held its set point.
+
+qm:
+  - name: ethane_torsional_barrier
+    method: HF
+    basis: STO-3G
+    kind: torsion_scan
+    structural_check:
+      barrier_is_finite: true
+      profile_has_at_least_points: 5
+      minimum_at_staggered_conformation: true
+    # The HF/STO-3G ethane barrier is a well-known quantity, so it is used here as a
+    # numerical check on input generation, execution and parsing -- not as a result.
+    numerical_reference:
+      quantity: rotational_barrier
+      units: kJ/mol
+      accepted_range: [9.0, 15.0]
+      source: >
+        The experimental ethane rotational barrier is about 12.1 kJ/mol. This range
+        checks the toolchain, and would need revisiting at a different level of theory.
+
+model:
+  target: density
+  features: descriptors
+  cross_validation:
+    folds: 5
+    grouping: polymer identity + structural similarity
+  structural_check:
+    reports_r2: true
+    records_dataset_fingerprint: true
+    records_model_fingerprint: true
+    # No minimum R^2 is asserted. With 18 polymers and 15 descriptors the honest answer
+    # may well be that the model has learned nothing, and the benchmark must be able to
+    # report that.
+
+structural_checks:
+  - every_property_declares_units
+  - every_property_declares_an_uncertainty_method
+  - every_decision_records_why
+  - manifest_contains_seeds_and_software_versions
+  - no_dry_run_reports_success
+  - provenance_reaches_from_analysis_back_to_the_system

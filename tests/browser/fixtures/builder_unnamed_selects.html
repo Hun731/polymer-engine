@@ -1,0 +1,31 @@
+<html><body><h1>Input Generator</h1>
+<!-- Modelled on the SHAPE observed on the live Polymer Builder page: unnamed selects,
+     repeated index-suffixed names (capf[1], capl[1]), a radio group named "model", and
+     a submit button whose text contains the word "Chains". Not a copy of that page --
+     only the structural features that broke discovery. -->
+<h2>System Type:</h2>
+<label><input type="radio" name="model" value="single"> Single Chain</label>
+<label><input type="radio" name="model" value="melt"> Melt</label>
+<label><input type="radio" name="model" value="solution"> Solution</label>
+
+<h2>Building Block(s) of Polymer:</h2>
+<table>
+<tr><td>
+  <select><option value="">--</option><option value="ETHY">Ethylene</option>
+          <option value="PROP">Propylene</option><option value="STYR">Styrene</option></select>
+</td><td>
+  <select><option value="">--</option><option value="ETHY">Ethylene</option>
+          <option value="PROP">Propylene</option><option value="STYR">Styrene</option></select>
+</td></tr>
+<tr><td>
+  <select name="capf[1]"><option value="H">Hydrogen</option><option value="CH3">Methyl</option>
+          <option value="OH">Hydroxyl</option></select>
+</td><td>
+  <select name="capl[1]"><option value="H">Hydrogen</option><option value="CH3">Methyl</option>
+          <option value="OH">Hydroxyl</option></select>
+</td></tr>
+</table>
+<input type="number" name="dp" id="dp"><label for="dp">Degree of polymerization</label>
+<button type="submit" id="next">Next Step:
+Build Polymer Chains</button>
+</body></html>

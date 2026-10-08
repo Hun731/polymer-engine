@@ -1,0 +1,9 @@
+TITLE     MDANALYSIS FRAME 0: Created by PDBWriter
+CRYST1   50.000   50.000   50.000  90.00  90.00  90.00 P 1           1
+ATOM      1  C1  POL X   1       0.000  10.000  10.000  1.00  0.00      SYS     
+ATOM      2  C2  POL X   1       1.000  10.000  10.000  1.00  0.00      SYS     
+ATOM      3  C3  POL X   1       2.000  10.000  10.000  1.00  0.00      SYS     
+ATOM      4  C4  POL X   1       3.000  10.000  10.000  1.00  0.00      SYS     
+ATOM      5  C5  POL X   1       4.000  10.000  10.000  1.00  0.00      SYS     
+ATOM      6  O1  TRC X   2      20.000  20.000  20.000  1.00  0.00      SYS     
+END

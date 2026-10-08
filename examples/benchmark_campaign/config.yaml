@@ -1,0 +1,67 @@
+# Benchmark campaign configuration.
+#
+# This file exists to demonstrate the machinery end to end. It does NOT encode a
+# scientific conclusion, and the parameters below are chosen to run in seconds on a
+# laptop -- they are far too short to support any real result. The gates will say so,
+# which is the point of the demonstration.
+
+paths:
+  root: ./workspace
+  database: workspace/engine.sqlite
+
+local_tools:
+  gromacs:
+    executable: gmx
+    min_version: "2021"
+  orca:
+    executable: orca
+
+resources:
+  max_concurrent_jobs: 2
+  gpu_available: false
+
+http:
+  offline: true          # the benchmark needs no network
+  cache_enabled: false
+
+safety:
+  execution_enabled: false   # set true, or pass --execute, to run real software
+
+simulation:
+  # DELIBERATELY TINY. A real campaign needs nanoseconds and >=3 replicas.
+  force_field: test-UA       # the fixture system's own parameters, not a real force field
+  water_model: SPC-like
+  temperature_k: 300.0
+  pressure_bar: 1.0
+  replicas: 2
+  minimization_steps: 200
+  nvt_ns: 0.004
+  npt_ns: 0.004
+  production_ns: 0.02
+  trajectory_output_ps: 0.02
+  energy_output_ps: 0.02
+  log_output_ps: 1.0
+
+umbrella:
+  spacing_nm: 0.08
+  force_constant_kj_mol_nm2: 1000.0
+  window_ns: 0.02
+  equilibration_fraction: 0.2
+  min_pair_overlap: 0.10
+  bootstrap_samples: 50
+  max_adaptive_rounds: 2
+
+analysis:
+  equilibration_detection: reverse-cumulative
+  min_effective_samples: 20.0
+  max_relative_stderr: 0.02
+  max_drift_fraction: 0.02
+  confidence_level: 0.95
+  random_seed: 20240101
+
+planning:
+  information_weight: 1.5
+  value_weight: 1.0
+  cost_weight: 0.5
+  risk_weight: 1.0
+  tie_break: cheapest

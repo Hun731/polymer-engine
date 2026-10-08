@@ -1,0 +1,123 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # The core suite must never reach the network. If something tries, it should fail
+  # here rather than pass on a developer's machine.
+  POLYMER_HTTP_OFFLINE: "true"
+
+jobs:
+  quality:
+    name: Lint and types
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -e ".[dev]"
+      - name: ruff
+        run: ruff check src tests
+      - name: mypy
+        run: mypy
+
+  test-core:
+    name: Core suite (no scientific extras)
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - run: pip install -e ".[dev]"
+      - name: Run without RDKit, MDAnalysis or scikit-learn
+        # Proves the optional dependencies really are optional: every module that needs
+        # one must degrade to an explicit UNSUPPORTED result, not crash.
+        run: pytest -rs
+
+  test-full:
+    name: Full suite (scientific extras)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -e ".[dev,science]"
+      - name: Run the whole suite
+        run: pytest -rs --cov --cov-report=xml --cov-report=term
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage
+          path: coverage.xml
+
+  security:
+    name: Security suite
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -e ".[dev]"
+      - name: Archive safety and credential leakage
+        run: pytest tests/security tests/property -rs
+
+  test-gromacs:
+    name: Real GROMACS execution
+    runs-on: ubuntu-latest
+    # These tests run actual MD. They are skipped with an explicit reason when gmx is
+    # absent, so this job proves the real-execution path rather than silently passing.
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install GROMACS
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends gromacs
+          gmx --version | head -5
+      - run: pip install -e ".[dev,science]"
+      - name: Verify generated inputs against real grompp
+        run: pytest tests/e2e -rs -v
+
+  build:
+    name: Build distribution
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install build
+      - run: python -m build
+      - name: Install the wheel into a clean environment and import it
+        run: |
+          python -m venv /tmp/fresh
+          /tmp/fresh/bin/pip install dist/*.whl
+          /tmp/fresh/bin/python -c "import polymer_engine; print(polymer_engine.__version__)"
+          /tmp/fresh/bin/polymer-engine --help
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/

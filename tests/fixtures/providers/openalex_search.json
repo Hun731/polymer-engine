@@ -1,0 +1,14 @@
+{
+  "meta": {"count": 2, "per_page": 25},
+  "results": [
+    {"id": "https://openalex.org/W1", "doi": "https://doi.org/10.1000/oa1", "title": "Glass transition prediction",
+     "publication_year": 2020, "type": "article", "cited_by_count": 88,
+     "open_access": {"is_oa": true},
+     "primary_location": {"source": {"display_name": "Polymer Chemistry"}},
+     "authorships": [{"author": {"display_name": "R. Author"}}],
+     "referenced_works": ["https://openalex.org/W0"]},
+    {"id": "https://openalex.org/W2", "doi": null, "display_name": "Cohesive energy of PMMA",
+     "publication_year": 2018, "type": "article", "cited_by_count": 5,
+     "open_access": {"is_oa": false}, "primary_location": {}, "authorships": [], "referenced_works": []}
+  ]
+}

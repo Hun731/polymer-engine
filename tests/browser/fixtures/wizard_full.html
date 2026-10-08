@@ -1,0 +1,34 @@
+<html><body><h1>Input Generator</h1>
+<h2>System Type:</h2>
+<label><input type="radio" name="model" value="single" checked> Single Chain</label>
+<h2>Building Block(s) of Polymer:</h2>
+<table id="poly_table"><tr><td>Polymer chain 1:</td><td>[</td>
+  <td><span id="unit1">select unit</span>
+  <input type="text" name="subtext[1]" value="10"></td><td>]</td></tr></table>
+<div class="menu"><div class="mono"><div class="mono-name">Polylactic acid</div>
+  <ul style="display:none"><li onclick="set_monomer(this)">atactic</li></ul></div></div>
+<div id="skel" style="display:none"><input type="text" name="subtext[1]" value="10"></div>
+<input type="hidden" name="jobid" value="">
+<button type="button" onclick="go(2)">Next Step:\nBuild Polymer Chains</button>
+<script>
+function set_monomer(el){
+  var dp=document.querySelector("#poly_table input[name^='subtext[1]']");
+  if(dp) dp.setAttribute('name','subtext[1][1]');
+  document.getElementById('unit1').textContent='PLA(ata)';}
+function go(step){
+  var j='<input type="hidden" name="jobid" value="7773331">';
+  if(step===2)  // built chain: intermediate download + more steps
+    document.body.innerHTML='<h1>Step 2</h1>'+j+
+      '<span class="download" onclick="download_project(this)">download.tgz</span>'+
+      '<button type="button" onclick="go(3)">Next Step:\nForce Field</button>';
+  else if(step===3)  // FF assignment: safe step
+    document.body.innerHTML='<h1>Step 3</h1><p>Force Field Options</p>'+j+
+      '<button type="button" onclick="go(4)">Next Step:\nGenerate Equilibrium</button>';
+  else if(step===4)  // generation boundary
+    document.body.innerHTML='<h1>Step 4</h1><p>Equilibrated</p>'+j+
+      '<button type="button" onclick="go(5)">Next Step:\nInput Generation</button>';
+  else if(step===5)  // terminal: final download, no more Next Step
+    document.body.innerHTML='<h1>Step 5</h1><p>Inputs generated for job 7773331</p>'+j+
+      '<span class="download" onclick="download_project(this)">download.tgz</span>';
+}
+</script></body></html>

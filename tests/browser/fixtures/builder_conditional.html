@@ -1,0 +1,27 @@
+<html><body><h1>Input Generator</h1>
+<!-- Most of the form is hidden until a System Type is chosen. A single snapshot of the
+     initial state sees a fraction of what the page offers. -->
+<h2>System Type:</h2>
+<label><input type="radio" name="model" value="single"> Single Chain</label>
+<label><input type="radio" name="model" value="melt"> Melt</label>
+<label><input type="radio" name="model" value="solution"> Solution</label>
+<h2>Building Block(s) of Polymer:</h2>
+<div id="blocks" style="display:none">
+  <select name="block[1]"><option value="">--</option>
+    <option value="ETHY">Ethylene</option><option value="PROP">Propylene</option>
+    <option value="STYR">Styrene</option><option value="LACT">Lactide</option>
+    <option value="VINY">Vinyl alcohol</option><option value="ACRY">Acrylate</option></select>
+  <input type="number" name="dp" id="dp"><label for="dp">Degree of polymerization</label>
+</div>
+<div id="meltonly" style="display:none">
+  <input type="number" name="nchain" id="nchain"><label for="nchain">Number of chains</label>
+</div>
+<script>
+document.querySelectorAll("input[name=model]").forEach(function(r){
+  r.addEventListener('change', function(){
+    document.getElementById('blocks').style.display = 'block';
+    document.getElementById('meltonly').style.display =
+      (this.value === 'melt') ? 'block' : 'none';
+  });
+});
+</script></body></html>

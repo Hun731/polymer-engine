@@ -1,0 +1,28 @@
+<html><body><h1>Input Generator</h1>
+<h2>Building Block(s) of Polymer:</h2>
+<!-- Matches the live structure: monomers are groups of <li onclick="set_monomer(this)">
+     whose own text is only the tacticity variant, and the group is named above the list.
+     A hidden skeleton carries a second "select unit", which is why an exact-text click
+     found two matches. -->
+<table id="poly_table"><tr>
+  <td>Polymer chain 1:</td><td>[</td>
+  <td><span style="cursor:pointer" onclick="openPicker()">select unit</span></td><td>]</td>
+</tr></table>
+<div id="picker" style="display:none">
+  <div class="mono"><div class="mono-name">Ethylene</div><ul>
+    <li onclick="set_monomer(this)">atactic</li></ul></div>
+  <div class="mono"><div class="mono-name">Propylene</div><ul>
+    <li onclick="set_monomer(this)">isotactic (R)</li>
+    <li onclick="set_monomer(this)">isotactic (S)</li>
+    <li onclick="set_monomer(this)">syndio (R)</li>
+    <li onclick="set_monomer(this)">atactic</li></ul></div>
+  <div class="mono"><div class="mono-name">Styrene</div><ul>
+    <li onclick="set_monomer(this)">isotactic (R)</li>
+    <li onclick="set_monomer(this)">atactic</li></ul></div>
+</div>
+<div id="skel" style="display:none">
+  <table><tr><td>Polymer chain 1:</td><td>[</td>
+  <td><span onclick="openPicker()">select unit</span></td><td>]</td></tr></table>
+</div>
+<script>function openPicker(){document.getElementById('picker').style.display='block';}</script>
+</body></html>

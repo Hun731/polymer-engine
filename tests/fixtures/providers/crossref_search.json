@@ -1,0 +1,29 @@
+{
+  "status": "ok",
+  "message-type": "work-list",
+  "message": {
+    "total-results": 2,
+    "items": [
+      {
+        "DOI": "10.1021/ma0001",
+        "title": ["Chain dynamics in amorphous polymers"],
+        "container-title": ["Macromolecules"],
+        "issued": {"date-parts": [[2019, 5, 2]]},
+        "type": "journal-article",
+        "author": [{"given": "A.", "family": "Researcher"}, {"given": "B.", "family": "Colleague"}],
+        "URL": "https://doi.org/10.1021/ma0001",
+        "is-referenced-by-count": 41
+      },
+      {
+        "DOI": "10.1021/ma0002",
+        "title": ["Cohesive energy density of polyesters"],
+        "container-title": ["Macromolecules"],
+        "issued": {"date-parts": [[2021]]},
+        "type": "journal-article",
+        "author": [{"given": "C.", "family": "Third"}],
+        "URL": "https://doi.org/10.1021/ma0002",
+        "is-referenced-by-count": 7
+      }
+    ]
+  }
+}

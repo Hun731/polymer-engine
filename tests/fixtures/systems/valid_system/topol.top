@@ -1,0 +1,21 @@
+; Test topology
+[ defaults ]
+; nbfunc  comb-rule  gen-pairs  fudgeLJ  fudgeQQ
+       1          2        yes      0.5      0.8333
+
+[ atomtypes ]
+; name  at.num  mass     charge  ptype  sigma    epsilon
+  CH2        6  14.027    0.000      A  0.39600   0.38000
+  OW         8  15.999    0.000      A  0.31656   0.65017
+  HW         1   1.008    0.000      A  0.00000   0.00000
+
+#include "polymer.itp"
+#include "water.itp"
+
+[ system ]
+Polymer in water
+
+[ molecules ]
+; molecule  count
+POL          1
+SOL         20

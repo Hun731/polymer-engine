@@ -1,0 +1,9 @@
+name,repeat_unit_smiles,Tg (degC),density (g/cm3),Young's Modulus (GPa),crystallinity (%)
+polyethylene,*CC*,-120,0.94,1.0,60
+polystyrene,*CC(*)c1ccccc1,100,1.05,3.2,0
+poly(ethylene oxide),*CCO*,-60,1.13,,70
+nylon-6,*NCCCCCC(=O)*,47,1.14,2.7,35
+poly(methyl methacrylate),*CC(C)(*)C(=O)OC,105,1.18,3.1,0
+polyethylene-duplicate,[*]CC[*],-120,0.94,1.0,60
+broken-row,not-a-smiles-at-all,50,1.0,1.0,0
+no-smiles-row,,50,1.0,1.0,0

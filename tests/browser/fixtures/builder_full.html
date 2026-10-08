@@ -1,0 +1,15 @@
+<html><body><h1>Polymer Builder</h1>
+<form><fieldset><legend>System</legend><table>
+<tr><td><label for="mon">Monomer</label></td><td><select id="mon" name="monomer">
+<option value="">-- choose --</option><option value="PE">Polyethylene</option>
+<option value="PLA">Poly(lactic acid)</option><option value="PS">Polystyrene</option></select></td></tr>
+<tr><td><label for="sys">System type</label></td><td><select id="sys" name="system_type">
+<option value="single_chain">Single Chain</option><option value="melt">Melt</option>
+<option value="solution">Solution</option></select></td></tr>
+<tr><td>Degree of polymerization</td><td><input id="dp" name="dp" type="number" required></td></tr>
+<tr><td><label for="nc">Number of chains</label></td><td><input id="nc" name="nchain" type="number"></td></tr>
+<tr><td><label for="tac">Tacticity</label></td><td><select id="tac" name="tacticity">
+<option value="atactic">Atactic</option><option value="isotactic">Isotactic</option></select></td></tr>
+<tr><td><label for="temp">Temperature</label></td><td><input id="temp" name="temperature" type="number"></td></tr>
+<tr><td><label for="term">Terminal group</label></td><td><input id="term" name="terminal" type="text"></td></tr>
+</table></fieldset><button type="button" id="next">Next Step</button></form></body></html>
